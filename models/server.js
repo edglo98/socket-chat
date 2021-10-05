@@ -8,10 +8,18 @@ import routerProducts from '../routes/products.js'
 import routerSearch from '../routes/search.js'
 import routerUpload from '../routes/uploads.js'
 import fileUpload from 'express-fileupload'
+import http from 'http'
+import { Server as IoServer } from 'socket.io'
+import { socketController } from '../controllers/sockets.js'
+
 export class Server {
   constructor () {
     this.port = process.env.PORT
     this.app = express()
+
+    this.server = http.createServer(this.app)
+
+    this.io = new IoServer(this.server)
 
     this.paths = {
       auth: '/api/auth',
@@ -26,6 +34,8 @@ export class Server {
 
     this.middlewares()
     this.routes()
+
+    this.sockets()
   }
 
   async conectDB () {
@@ -52,6 +62,10 @@ export class Server {
     this.app.use(this.paths.upload, routerUpload)
   }
 
+  sockets () {
+    this.io.on('connection', socketController)
+  }
+
   async getLocalIp () {
     return import('os')
       .then((os) => {
@@ -64,23 +78,23 @@ export class Server {
 
   listen () {
     console.clear()
-    this.app.listen(this.port, () => {
-      console.log(' -------------------------------------------------')
+    this.server.listen(this.port, () => {
+      // console.log(' -------------------------------------------------')
       console.log(`|  💻 Server runing on port ${this.port}.                 |`)
       console.log(`|  You can watch here: http://localhost:${this.port}/     |`)
     })
 
     // Run local server
-    if (process.env.NODE_ENV === 'development') {
-      this.getLocalIp()
-        .then(ip => (
-          this.app.listen(this.port, ip, () => {
-            console.log('|                                                 |')
-            console.log('|  📡 Server runing on local network.             |')
-            console.log(`|  You can watch here: http://${ip}:${this.port}/  |`)
-            console.log(' ------------------------------------------------- ')
-          })
-        ))
-    }
+    // if (process.env.NODE_ENV === 'development') {
+    //   this.getLocalIp()
+    //     .then(ip => (
+    //       this.app.listen(this.port, ip, () => {
+    //         console.log('|                                                 |')
+    //         console.log('|  📡 Server runing on local network.             |')
+    //         console.log(`|  You can watch here: http://${ip}:${this.port}/  |`)
+    //         console.log(' ------------------------------------------------- ')
+    //       })
+    //     ))
+    // }
   }
 }
