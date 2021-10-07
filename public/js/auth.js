@@ -1,9 +1,10 @@
+/* global fetch, localStorage, google, location */
 const url = window.location.hostname.includes('localhost')
-  ? 'http://localhost:8080/api/auth/google'
-  : 'https://cafe-api-e.herokuapp.com/api/auth/google'
+  ? 'http://localhost:8080/api/auth/'
+  : 'https://cafe-api-e.herokuapp.com/api/auth/'
 
 function handleCredentialResponse (response) {
-  fetch(url, {
+  fetch(url + 'google', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -31,3 +32,10 @@ $button.onclick = () => {
 }
 
 const $ = x => document.querySelector(x)
+
+const $loginForm = $('#login-form')
+
+$loginForm.addEventListener('submit', e => {
+  e.preventDefault()
+  console.log(e)
+})
