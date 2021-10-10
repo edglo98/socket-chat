@@ -1,4 +1,7 @@
 /* global fetch, localStorage, google, location */
+
+const $ = x => document.querySelector(x)
+
 const url = window.location.hostname.includes('localhost')
   ? 'http://localhost:8080/api/auth/'
   : 'https://cafe-api-e.herokuapp.com/api/auth/'
@@ -20,7 +23,7 @@ function handleCredentialResponse (response) {
     .catch(console.warn)
 }
 
-const $button = document.querySelector('#google-signout')
+const $button = $('#google-signout')
 $button.onclick = () => {
   console.log(google.accounts.id)
   google.accounts.id.disableAutoSelect()
@@ -31,11 +34,28 @@ $button.onclick = () => {
   })
 }
 
-const $ = x => document.querySelector(x)
-
 const $loginForm = $('#login-form')
 
 $loginForm.addEventListener('submit', e => {
   e.preventDefault()
-  console.log(e)
+  const data = {}
+  for (const element of $loginForm.elements) {
+    if (element.name.length > 0) {
+      data[element.name] = element.value
+    }
+  }
+
+  fetch(url + 'login', {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: { 'Content-Type': 'application/json' }
+  })
+    .then(res => res.json())
+    .then(({ errors, token }) => {
+      if (errors) {
+        return console.error(errors)
+      }
+      localStorage.setItem('token', token)
+    })
+    .catch(console.error)
 })
