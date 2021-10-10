@@ -17,13 +17,13 @@ export const validateJWT = async (req, res, next) => {
 
     if (!user) {
       return res.status(401).json({
-        msg: 'Token no válido'
+        msg: 'Token no válido, usuario no encontrado'
       })
     }
 
     if (!user.status) {
       return res.status(401).json({
-        msg: 'Token no válido'
+        msg: 'Token no válido, usuario deshabilitado'
       })
     }
 
@@ -32,7 +32,8 @@ export const validateJWT = async (req, res, next) => {
   } catch (err) {
     console.log(err)
     res.status(401).json({
-      msg: 'Token no válido'
+      msg: 'Token no válido',
+      err
     })
   }
 }

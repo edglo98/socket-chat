@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { check } from 'express-validator'
-import { googleSignIn, login } from '../controllers/auth.js'
+import { googleSignIn, login, renewToken } from '../controllers/auth.js'
+import { validateJWT } from '../middlewares/validateJWT.js'
 import { validateReq } from '../middlewares/validateReq.js'
 
 const routerUser = Router()
@@ -16,4 +17,5 @@ routerUser.post('/google', [
   validateReq
 ], googleSignIn)
 
+routerUser.get('/', validateJWT, renewToken)
 export default routerUser
