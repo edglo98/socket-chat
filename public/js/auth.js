@@ -6,6 +6,7 @@ const url = window.location.hostname.includes('localhost')
   ? 'http://localhost:8080/api/auth/'
   : 'https://cafe-api-e.herokuapp.com/api/auth/'
 
+// eslint-disable-next-line no-unused-vars
 function handleCredentialResponse (response) {
   fetch(url + 'google', {
     method: 'POST',
@@ -16,9 +17,8 @@ function handleCredentialResponse (response) {
   })
     .then(res => res.json())
     .then(res => {
-      console.log(res)
-      localStorage.setItem('email', res.user.email)
       localStorage.setItem('token', res.token)
+      window.location = 'chat.html'
     })
     .catch(console.warn)
 }
@@ -56,6 +56,7 @@ $loginForm.addEventListener('submit', e => {
         return console.error(errors)
       }
       localStorage.setItem('token', token)
+      window.location = 'chat.html'
     })
     .catch(console.error)
 })

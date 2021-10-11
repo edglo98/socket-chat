@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken'
 import Category from '../models/category.js'
 import Role from '../models/role.js'
 import User from '../models/user.js'
@@ -41,4 +42,22 @@ export const isIdOfProduct = async (id) => {
 export const validateColection = (colection, validColections = []) => {
   if (!validColections.includes(colection)) throw new Error(`La colección ${colection} no es permitida, las colecciones permitidas son: ${validColections}`)
   return true
+}
+
+export const validateJWT = async (token = '') => {
+  try {
+    if (token.length < 10) {
+      return null
+    }
+
+    const { uid } = jwt.verify(token, process.env.SECRET_KEY)
+    const userfound = await User.findById(uid)
+
+    if (!userfound) return null
+    if (!userfound.status) return null
+
+    return userfound
+  } catch (error) {
+    return null
+  }
 }
