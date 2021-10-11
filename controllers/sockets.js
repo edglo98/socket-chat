@@ -10,6 +10,9 @@ export const socketController = async (socket, io) => {
 
   chatMenssages.connectUser(user)
   io.emit('users-online', chatMenssages.usersArr)
+  socket.emit('get-msg', chatMenssages.last10)
+
+  socket.join(user.id)
 
   socket.on('disconnect', () => {
     chatMenssages.disconnect(user.id)
@@ -17,7 +20,11 @@ export const socketController = async (socket, io) => {
   })
 
   socket.on('send-msg', ({ msg, uid }) => {
-    chatMenssages.sendMenssage(user.id, user.name, msg)
-    io.emit('get-msg', chatMenssages.last10)
+    if (uid) {
+      socket.to(uid).emit('private-msg', { from: user.name, msg })
+    } else {
+      chatMenssages.sendMenssage(user.id, user.name, msg)
+      io.emit('get-msg', chatMenssages.last10)
+    }
   })
 }

@@ -11,7 +11,7 @@ const $txtUid = $('#txtUid')
 const $txtMensaje = $('#txtMensaje')
 const $ulUsuarios = $('#ulUsuarios')
 const $ulMensajes = $('#ulMensajes')
-const $btnSalir = $('#btnSalir')
+// const $btnSalir = $('#btnSalir')
 
 const validateJWT = async () => {
   const token = localStorage.getItem('token') || ''
@@ -48,15 +48,11 @@ const connectSocket = async () => {
     console.log('Sockets Offline')
   })
 
-  socket.on('get-msg', payload => {
-    console.log(payload)
-  })
+  socket.on('get-msg', renderMenssages)
 
   socket.on('users-online', renderUser)
 
-  socket.on('msg-private', () => {
-
-  })
+  socket.on('private-msg', renderPrivateMsg)
 }
 
 const renderUser = (users = []) => {
@@ -71,6 +67,31 @@ const renderUser = (users = []) => {
     `
   })
     .join('')
+}
+
+const renderMenssages = (msgs = []) => {
+  $ulMensajes.innerHTML = msgs.map(({ msg, name }) => {
+    return `
+      <li>
+        <p>
+          <span class="text-primary">${name}</h5>:
+          <span class="fs-6 text-muted">${msg}</span>
+        </p>
+      </li>
+    `
+  })
+    .join('')
+}
+
+const renderPrivateMsg = ({ from, msg }) => {
+  $ulMensajes.innerHTML += `
+  <li>
+    <p>
+      <span class="text-secondary">${from}</h5>:
+      <span class="fs-6 text-muted">${msg}</span>
+    </p>
+  </li>
+`
 }
 
 $txtMensaje.addEventListener('keyup', ({ keyCode }) => {
