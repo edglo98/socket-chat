@@ -15,4 +15,9 @@ export const socketController = async (socket, io) => {
     chatMenssages.disconnect(user.id)
     io.emit('users-online', chatMenssages.usersArr)
   })
+
+  socket.on('send-msg', ({ msg, uid }) => {
+    chatMenssages.sendMenssage(user.id, user.name, msg)
+    io.emit('get-msg', chatMenssages.last10)
+  })
 }

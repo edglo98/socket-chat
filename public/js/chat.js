@@ -48,8 +48,8 @@ const connectSocket = async () => {
     console.log('Sockets Offline')
   })
 
-  socket.on('get-msg', () => {
-
+  socket.on('get-msg', payload => {
+    console.log(payload)
   })
 
   socket.on('users-online', renderUser)
@@ -60,8 +60,6 @@ const connectSocket = async () => {
 }
 
 const renderUser = (users = []) => {
-  console.log(users)
-
   $ulUsuarios.innerHTML = users.map(({ name, uid }) => {
     return `
       <li>
@@ -74,6 +72,16 @@ const renderUser = (users = []) => {
   })
     .join('')
 }
+
+$txtMensaje.addEventListener('keyup', ({ keyCode }) => {
+  const msg = $txtMensaje.value
+  const uid = $txtUid.value
+  if (keyCode !== 13) return
+  if (msg.length === 0) return
+
+  socket.emit('send-msg', { msg, uid })
+  $txtMensaje.value = ''
+})
 
 const main = async () => {
   await validateJWT()
