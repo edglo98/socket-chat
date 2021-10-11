@@ -52,13 +52,27 @@ const connectSocket = async () => {
 
   })
 
-  socket.on('users-online', () => {
-
-  })
+  socket.on('users-online', renderUser)
 
   socket.on('msg-private', () => {
 
   })
+}
+
+const renderUser = (users = []) => {
+  console.log(users)
+
+  $ulUsuarios.innerHTML = users.map(({ name, uid }) => {
+    return `
+      <li>
+        <p>
+          <h5 class="text-success">${name}</h5>
+          <span class="fs-6 text-muted">${uid}</span>
+        </p>
+      </li>
+    `
+  })
+    .join('')
 }
 
 const main = async () => {
