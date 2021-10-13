@@ -25,7 +25,6 @@ function handleCredentialResponse (response) {
 
 const $button = $('#google-signout')
 $button.onclick = () => {
-  console.log(google.accounts.id)
   google.accounts.id.disableAutoSelect()
 
   google.accounts.id.revoke(localStorage.getItem('email'), done => {
